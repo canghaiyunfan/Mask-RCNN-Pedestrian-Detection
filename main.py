@@ -3,8 +3,9 @@ import sys
 import random
 import math
 import numpy as np
-import skimage.io
+#import skimage.io
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # RCNN Dependencies
@@ -78,20 +79,25 @@ if __name__ == '__main__':
     ##################################################
     # Real Time Detection
     ##################################################
+    # 打开交互模式
     plt.ion()
     size = (16, 16)
     fig, ax = plt.subplots(1, figsize = size)
 
-    cap = cv2.VideoCapture(0)
+    #cap = cv2.VideoCapture(0)
 
     # Uncomment the following snippet for testing it on the video in test
-    # cap = cv2.VideoCapture('test/Pedestrian overpass.mp4')
+    video_dir = os.path.join(ROOT_DIR,'test/','Pedestrian overpass.mp4')
+    cap = cv2.VideoCapture(video_dir)
 
     if (cap.isOpened() == False):
         print("Error opening video stream / file")
         exit(0)
     else:
+        # get a frame
         ret , frame0 = cap.read()
+        # show a frame
+        #cv2.imshow("capture", frame0)
         prevFrame = cv2.cvtColor(frame0, cv2.COLOR_BGR2GRAY)
 
     ##################################################
