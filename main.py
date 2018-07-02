@@ -5,7 +5,7 @@ import math
 import numpy as np
 #import skimage.io
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # RCNN Dependencies
@@ -84,6 +84,8 @@ if __name__ == '__main__':
     size = (16, 16)
     fig, ax = plt.subplots(1, figsize = size)
 
+    #使用opencv自带的VideoCapture()函数定义摄像头对象，
+    # 其参数0表示第一个摄像头，一般就是笔记本的内建摄像头
     #cap = cv2.VideoCapture(0)
 
     # Uncomment the following snippet for testing it on the video in test
@@ -93,12 +95,15 @@ if __name__ == '__main__':
     if (cap.isOpened() == False):
         print("Error opening video stream / file")
         exit(0)
-    else:
-        # get a frame
-        ret , frame0 = cap.read()
-        # show a frame
-        #cv2.imshow("capture", frame0)
-        prevFrame = cv2.cvtColor(frame0, cv2.COLOR_BGR2GRAY)
+
+    # get a frame
+    # 从摄像头读取一帧，ret是表明成功与否
+    ret , frame0 = cap.read()
+    # show a frame
+    #cv2.imshow("capture", frame0)
+    output_dir = os.path.join(ROOT_DIR,'output/')
+    cv2.imwrite(output_dir+'frame0.jpg', frame0)
+    prevFrame = cv2.cvtColor(frame0, cv2.COLOR_BGR2GRAY)
 
     ##################################################
     # Particle Filter Initialization
@@ -191,6 +196,7 @@ if __name__ == '__main__':
         if cv2.waitKey(25) & 0xFF == 27:
             break
 
+    #调用release()释放摄像头，调用destroyAllWindows()关闭所有图像窗口。
     cap.release()
     cv2.destroyAllWindows()
 
