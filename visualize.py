@@ -86,7 +86,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
     """
     # Number of instances
     N = boxes.shape[0]
-
+    print(N)
     if not N:
         print("\n*** No instances to display *** \n")
     else:
@@ -145,6 +145,8 @@ def display_instances(image, boxes, masks, class_ids, class_names,
                 verts = np.fliplr(verts) - 1
                 p = Polygon(verts, facecolor="none", edgecolor=color)
                 ax.add_patch(p)
+    #plt.imshow()函数负责对图像进行处理，并显示其格式，
+    #而plt.show()则是将plt.imshow()处理后的函数显示出来。
     ax.imshow(masked_image.astype(np.uint8))
     plt.show()
     plt.pause(0.01)

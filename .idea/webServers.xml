@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="3a2b02da-91e9-480c-844c-c7fdb685478e" name="Mask-RCNN-Pedestrian-Detection" url="http://106.38.85.251">
+        <fileTransfer host="106.38.85.251" port="32989" rootFolder="/data/data_67L46I1z/Mask-RCNN-Pedestrian-Detection" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="32989" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
