@@ -120,7 +120,10 @@ if __name__ == '__main__':
         ##################################################
         # Calculate Optical Flow
         ##################################################
-        nextFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        if ret is True:
+            nextFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        else:
+            break
         flow = cv2.calcOpticalFlowFarneback(prevFrame, nextFrame, None, 0.5, 3, 15, 3, 5, 1.2, 0)
         dx , dy = flow[...,0], flow[...,1]
         prevFrame = nextFrame

@@ -27,7 +27,10 @@ def sparseOpticalFlow():
     mask = np.zeros_like(old_frame)
     while(1):
         ret,frame = cap.read()
-        frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        if ret is True:
+            frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        else:
+            break
         # calculate optical flow
         p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
         # Select good points
