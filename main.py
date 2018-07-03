@@ -5,7 +5,7 @@ import math
 import numpy as np
 #import skimage.io
 import matplotlib
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 # RCNN Dependencies
@@ -113,10 +113,8 @@ if __name__ == '__main__':
     for i in range(numParticles):
         particles[i] = particle.Particle(random.randint(0,frame0.shape[0]-1), random.randint(0,frame0.shape[1]-1), 1/numParticles)
 
-
     while(cap.isOpened()):
         ret, frame = cap.read()
-
         start = time.time()
 
         ##################################################
@@ -144,7 +142,8 @@ if __name__ == '__main__':
             if r['class_ids'][k] == 1:
                 idx.append(k)
 
-        idS = 0; maxE = 0
+        idS = 0
+        maxE = 0
         for k in idx:
             if r['scores'][k] > maxE:
                 maxE = r['scores'][k]
