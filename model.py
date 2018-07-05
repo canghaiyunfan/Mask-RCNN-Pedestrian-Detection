@@ -230,6 +230,8 @@ def clip_boxes_graph(boxes, window):
     wy1, wx1, wy2, wx2 = tf.split(window, 4)
     y1, x1, y2, x2 = tf.split(boxes, 4, axis=1)
     # Clip
+    #(wy1，wx1)为原图左上角坐标，(wy2，wx2)为原图右下角坐标
+    #为防止边界框坐标超出图像范围，与(wy2，wx2)比较取较小值，与(wy1，wx1)比较取较大值
     y1 = tf.maximum(tf.minimum(y1, wy2), wy1)
     x1 = tf.maximum(tf.minimum(x1, wx2), wx1)
     y2 = tf.maximum(tf.minimum(y2, wy2), wy1)
@@ -293,7 +295,10 @@ class ProposalLayer(KE.Layer):
                                   self.config.IMAGES_PER_GPU,
                                   names=["refined_anchors"])
 
-        # Clip to image boundaries. [batch, N, (y1, x1, y2, x2)]
+        # 下面的作用：防止修正后的anchor坐标超出了边界即0<=x,y<=1
+        # Clip to image boundaries. Since we're in normalized coordinates,
+        # clip to 0..1 range. [batch, N, (y1, x1, y2, x2)]
+        #整个图像的高，宽，左上角为（0，0）
         height, width = self.config.IMAGE_SHAPE[:2]
         window = np.array([0, 0, height, width]).astype(np.float32)
         boxes = utils.batch_slice(boxes,
@@ -305,7 +310,7 @@ class ProposalLayer(KE.Layer):
         # According to Xinlei Chen's paper, this reduces detection accuracy
         # for small objects, so we're skipping it.
 
-        # Normalize coordinates
+        # Normalize coordinates 就是对应原图的百分比坐标
         normalized_boxes = norm_boxes_graph(boxes, self.config.IMAGE_SHAPE[:2])
 
         # Non-max suppression
@@ -316,6 +321,7 @@ class ProposalLayer(KE.Layer):
             proposals = tf.gather(normalized_boxes, indices)
             # Pad if needed
             padding = tf.maximum(self.proposal_count - tf.shape(proposals)[0], 0)
+            # 不足阈值大小则底部补0来填充
             proposals = tf.pad(proposals, [(0, padding), (0, 0)])
             return proposals
         proposals = utils.batch_slice([normalized_boxes, scores], nms,
@@ -1909,6 +1915,7 @@ class MaskRCNN():
         outputs = [KL.Concatenate(axis=1, name=n)(list(o))
                    for o, n in zip(outputs, output_names)]
 
+        #rpn_class_logits包含P2,P3,P4,P5,P6对应的输出, rpn_class, rpn_bbox同理
         rpn_class_logits, rpn_class, rpn_bbox = outputs
 
         # Generate proposals
