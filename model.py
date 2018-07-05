@@ -293,7 +293,9 @@ class ProposalLayer(KE.Layer):
                                   self.config.IMAGES_PER_GPU,
                                   names=["refined_anchors"])
 
-        # Clip to image boundaries. [batch, N, (y1, x1, y2, x2)]
+        # 下面的作用：防止修正后的anchor坐标超出了边界即0<=x,y<=1
+        # Clip to image boundaries. Since we're in normalized coordinates,
+        # clip to 0..1 range. [batch, N, (y1, x1, y2, x2)]
         height, width = self.config.IMAGE_SHAPE[:2]
         window = np.array([0, 0, height, width]).astype(np.float32)
         boxes = utils.batch_slice(boxes,
@@ -305,7 +307,7 @@ class ProposalLayer(KE.Layer):
         # According to Xinlei Chen's paper, this reduces detection accuracy
         # for small objects, so we're skipping it.
 
-        # Normalize coordinates
+        # Normalize coordinates 就是对应原图的百分比坐标
         normalized_boxes = norm_boxes_graph(boxes, self.config.IMAGE_SHAPE[:2])
 
         # Non-max suppression
@@ -316,6 +318,7 @@ class ProposalLayer(KE.Layer):
             proposals = tf.gather(normalized_boxes, indices)
             # Pad if needed
             padding = tf.maximum(self.proposal_count - tf.shape(proposals)[0], 0)
+            # 不足阈值大小则底部补0来填充
             proposals = tf.pad(proposals, [(0, padding), (0, 0)])
             return proposals
         proposals = utils.batch_slice([normalized_boxes, scores], nms,
