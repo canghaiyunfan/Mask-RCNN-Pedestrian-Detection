@@ -298,6 +298,7 @@ class ProposalLayer(KE.Layer):
         # 下面的作用：防止修正后的anchor坐标超出了边界即0<=x,y<=1
         # Clip to image boundaries. Since we're in normalized coordinates,
         # clip to 0..1 range. [batch, N, (y1, x1, y2, x2)]
+
         #整个图像的高，宽，左上角为（0，0）
         height, width = self.config.IMAGE_SHAPE[:2]
         window = np.array([0, 0, height, width]).astype(np.float32)
