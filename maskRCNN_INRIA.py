@@ -13,11 +13,12 @@ import coco
 import utils
 import model as modellib
 import visualize
-
 # Video Detection Dependenices
 import cv2
 import time
 import urllib.request as urllib2
+import evaluate
+import globalvar as gl
 
 # Root directory of the project
 ROOT_DIR = os.getcwd()
@@ -49,7 +50,6 @@ model = modellib.MaskRCNN(mode="inference", model_dir=MODEL_DIR, config=config)
 
 # Load weights trained on MS-COCO
 model.load_weights(COCO_MODEL_PATH, by_name=True)
-
 # COCO Class names
 # Index of the class in the list is its ID. For example, to get ID of
 # the teddy bear class, use: class_names.index('teddy bear')
@@ -98,7 +98,10 @@ def load_image(imagePath):
 t_prediction = 0
 t_start = time.time()
 imageNum = 0
-imageNames = getAllFiles(IMAGE_DIR, '.png')
+imageNames = getAllFiles("/data/data_67L46I1z/Mask-RCNN-Pedestrian-Detection/INRIAPerson/Train/pos", '.png')
+person_info = evaluate.get_person_num_info("/data/data_67L46I1z/Mask-RCNN-Pedestrian-Detection/INRIAPerson/Train/annotations")
+all_person_num = 0
+temp = 0
 for imageName in imageNames:
     frame =load_image(imageName[0])
     #frame = cv2.imread('test/1.jpg')
@@ -110,13 +113,18 @@ for imageName in imageNames:
     r = results[0]
     t_prediction += (time.time() - t)
     imageNum += 1
+    temp += person_info[imageName[1]]
     print('##########################')
     print("imageName:{}.imageNum:{}.".format(imageName[1],imageNum))
     ##################################################
     # Image Plotting
     ##################################################
-    visualize.display_instances(frame, r['rois'], r['masks'], r['class_ids'], class_names, r['scores'])
+    #visualize.display_instances(frame, r['rois'], r['masks'], r['class_ids'], class_names, r['scores'])
+    evaluate.get_precision(imageName[1], r['rois'], r['class_ids'], person_info[imageName[1]])
 
 print("Prediction time: {}. Average {}/image".format(
         t_prediction, t_prediction / imageNum))
 print("Total time: ", time.time() - t_start)
+print("ground truth行人的总数量:{}".format(gl.get_value('total_person_num_gt')))
+print("检测到行人的总数量:{}".format(gl.get_value('total_person_num_detect')))
+print(temp)
