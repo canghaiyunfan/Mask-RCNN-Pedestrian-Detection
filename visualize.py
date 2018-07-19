@@ -6,7 +6,7 @@ Copyright (c) 2017 Matterport, Inc.
 Licensed under the MIT License (see LICENSE for details)
 Written by Waleed Abdulla
 """
-
+import os
 import random
 import itertools
 import colorsys
@@ -75,7 +75,7 @@ def apply_mask(image, mask, color, alpha=0.5):
 
 def display_instances(image, boxes, masks, class_ids, class_names,
                       scores=None, title="",
-                      figsize=(16, 16), ax=None, fig=None):
+                      figsize=(16, 16), ax=None, fig=None,filepath=None):
     """
     boxes: [num_instance, (y1, x1, y2, x2, class_id)] in image coordinates.
     masks: [height, width, num_instances]
@@ -93,7 +93,7 @@ def display_instances(image, boxes, masks, class_ids, class_names,
         assert boxes.shape[0] == masks.shape[-1] == class_ids.shape[0]
 
     if not ax:
-        _, ax = plt.subplots(1, figsize=figsize)
+        fig, ax = plt.subplots(1, figsize=figsize)
 
     # Generate random colors
     colors = random_colors(N)
@@ -149,6 +149,9 @@ def display_instances(image, boxes, masks, class_ids, class_names,
     #plt.imshow()函数负责对图像进行处理，并显示其格式，
     #而plt.show()则是将plt.imshow()处理后的函数显示出来。
     ax.imshow(masked_image.astype(np.uint8))
+    figname = ''.join([ax.get_title(),'.png'])
+    if filepath is not None:
+        fig.savefig(os.path.join(filepath,figname))
     plt.show()
     plt.pause(0.01)
     ax.clear()

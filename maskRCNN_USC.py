@@ -34,7 +34,7 @@ if not os.path.exists(COCO_MODEL_PATH):
 
 # Directory of images to run detection on
 IMAGE_DIR = os.path.join(ROOT_DIR, "images")
-
+OUTPUT_DIR = os.path.join(ROOT_DIR,"results_output")
 
 class InferenceConfig(coco.CocoConfig):
     # Set batch size to 1 since we'll be running inference on
@@ -120,7 +120,10 @@ for imageName in imageNames:
     ##################################################
     # Image Plotting
     ##################################################
-    #visualize.display_instances(frame, r['rois'], r['masks'], r['class_ids'], class_names, r['scores'])
+    visualize.display_instances(frame, r['rois'], r['masks'],
+                                r['class_ids'], class_names,
+                                r['scores'],title=imageName[1],
+                                filepath= OUTPUT_DIR)
     USC_evaluate.get_precision(imageName[1], r['class_ids'], person_info[imageName[1]],f)
 
 print("Prediction time: {}. Average {}/image".format(
