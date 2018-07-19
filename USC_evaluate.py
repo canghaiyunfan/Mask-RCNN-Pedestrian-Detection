@@ -38,7 +38,7 @@ def get_person_num_info(dirName):
 
 def get_precision(imageName,class_ids,person_num_gt,file):
     if len(class_ids) == 0:
-        print("\n*** No instances *** \n")
+        print("\n*** class_ids length is 0 *** \n")
     person_dict = collections.Counter(class_ids)
     person__num_detect = person_dict[1]
 
