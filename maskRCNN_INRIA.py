@@ -17,7 +17,7 @@ import visualize
 import cv2
 import time
 import urllib.request as urllib2
-import evaluate
+import INRIA_evaluate
 import globalvar as gl
 
 # Root directory of the project
@@ -99,7 +99,7 @@ t_prediction = 0
 t_start = time.time()
 imageNum = 0
 imageNames = getAllFiles("/data/data_67L46I1z/Mask-RCNN-Pedestrian-Detection/INRIAPerson/Train/pos", '.png')
-person_info = evaluate.get_person_num_info("/data/data_67L46I1z/Mask-RCNN-Pedestrian-Detection/INRIAPerson/Train/annotations")
+person_info = INRIA_evaluate.get_person_num_info("/data/data_67L46I1z/Mask-RCNN-Pedestrian-Detection/INRIAPerson/Train/annotations")
 all_person_num = 0
 temp = 0
 for imageName in imageNames:
@@ -120,7 +120,7 @@ for imageName in imageNames:
     # Image Plotting
     ##################################################
     #visualize.display_instances(frame, r['rois'], r['masks'], r['class_ids'], class_names, r['scores'])
-    evaluate.get_precision(imageName[1], r['rois'], r['class_ids'], person_info[imageName[1]])
+    INRIA_evaluate.get_precision(imageName[1], r['class_ids'], person_info[imageName[1]])
 
 print("Prediction time: {}. Average {}/image".format(
         t_prediction, t_prediction / imageNum))
